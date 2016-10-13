@@ -11,8 +11,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -36,7 +36,7 @@ public abstract class AbstractFacade<T extends EntidadeGenerica> {
         this.entityClass = entityClass;
     }
 
-    @PersistenceContext
+    @Inject
     @Getter
     @Setter
     private EntityManager entityManager;
@@ -322,5 +322,9 @@ public abstract class AbstractFacade<T extends EntidadeGenerica> {
     public LocalDate getDateOnServer() {
         TypedQuery<LocalDate> qry = getEntityManager().createQuery("SELECT localdate", LocalDate.class);
         return qry.getSingleResult();
+    }
+    
+    public void refresh(T entity){
+        getEntityManager().refresh(entity);
     }
 }
