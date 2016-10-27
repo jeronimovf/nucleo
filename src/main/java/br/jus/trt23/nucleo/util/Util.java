@@ -397,4 +397,5 @@ public class Util {
         return String.format("%s.%s.%s/%s-%s", cnpjMascara.substring(0, 2), cnpjMascara.substring(2, 5), cnpjMascara.substring(5, 8), cnpjMascara.substring(8, 12), cnpjMascara.substring(12));
     }
 
+
 }
