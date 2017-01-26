@@ -22,7 +22,7 @@ public interface Constantes
 	
 	public static final String CODIGO_SISTEMA = "CODIGO_SISTEMA";
 	
-	public static final String AMBIENTE_PRODUCAO = "AMBIENTE_PRODUCAO";
+	public static final String AMBIENTE = "AMBIENTE";
 	
 	public static final String VIEW_SESSAO_EXPIRADA = "/sessaoExpirada.xhtml";
 	
