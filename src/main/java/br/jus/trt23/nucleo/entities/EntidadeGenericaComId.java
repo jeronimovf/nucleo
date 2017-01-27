@@ -35,7 +35,7 @@ import lombok.Setter;
 public abstract class EntidadeGenericaComId implements Serializable, Comparable, Entidade {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     protected Long id;
 
     protected static String[] uniqueIndex;
