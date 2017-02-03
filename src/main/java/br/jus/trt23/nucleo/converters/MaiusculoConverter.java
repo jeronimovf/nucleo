@@ -1,4 +1,4 @@
-package br.jus.trt23.nucleo.converter;
+package br.jus.trt23.nucleo.converters;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

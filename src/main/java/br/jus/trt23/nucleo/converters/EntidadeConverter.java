@@ -1,7 +1,6 @@
-package br.jus.trt23.nucleo.converter;
+package br.jus.trt23.nucleo.converters;
 
 import br.jus.trt23.nucleo.entities.EntidadeGenerica;
-import br.jus.trt23.nucleo.entities.EntidadeGenericaComId;
 import java.io.Serializable;
 import java.util.Map;
 import javax.faces.component.UIComponent;
@@ -27,9 +26,6 @@ public class EntidadeConverter implements Converter {
             if (value instanceof EntidadeGenerica) {
                 EntidadeGenerica entity = (EntidadeGenerica) value;
                 codigo = entity.getId();
-            } else if (value instanceof EntidadeGenericaComId) {
-                EntidadeGenericaComId entity = (EntidadeGenericaComId) value;
-                codigo = entity.getId();
             } else {
                 return "";
             }
@@ -48,9 +44,6 @@ public class EntidadeConverter implements Converter {
         Serializable codigo=null;
         if (o instanceof EntidadeGenerica) {
             EntidadeGenerica entity = (EntidadeGenerica) o;
-            codigo = entity.getId();
-        } else if (o instanceof EntidadeGenericaComId) {
-            EntidadeGenericaComId entity = (EntidadeGenericaComId) o;
             codigo = entity.getId();
         }
         if (null != codigo) {

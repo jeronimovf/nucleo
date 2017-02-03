@@ -21,7 +21,7 @@
     <groupId>br.jus.trt23</groupId>
     <artifactId>nucleo2</artifactId>
     <packaging>jar</packaging>
-    <name>Nucleo 2.0</name>
+    <name>Nucleo 2</name>
     <description>Infraestrutura projetos CDS</description>
     <version>2.0.0-SNAPSHOT</version>
 

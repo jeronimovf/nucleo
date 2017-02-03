@@ -1,4 +1,4 @@
-package br.jus.trt23.nucleo.constantes;
+package br.jus.trt23.nucleo.constants;
 
 import java.text.SimpleDateFormat;
 

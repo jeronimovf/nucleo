@@ -1,6 +1,7 @@
-package br.jus.trt23.nucleo.jsf.util;
+package br.jus.trt23.nucleo.handlers;
 
 import com.sun.faces.component.visit.FullVisitContext;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,13 +14,15 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.component.visit.VisitCallback;
 import javax.faces.component.visit.VisitContext;
 import javax.faces.component.visit.VisitResult;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
-public class JsfUtil {
+public class Jsf {
 
     public static List<SelectItem> getSelectItems(List<?> entities, boolean selectOne) {
         List<SelectItem> items = new ArrayList<>();
@@ -74,7 +77,7 @@ public class JsfUtil {
     }
 
     public static Object getObjectFromRequestParameter(String requestParameterName, Converter converter, UIComponent component) {
-        String theId = JsfUtil.getRequestParameter(requestParameterName);
+        String theId = Jsf.getRequestParameter(requestParameterName);
         return converter.getAsObject(FacesContext.getCurrentInstance(), component, theId);
     }
 
@@ -147,5 +150,11 @@ public class JsfUtil {
         });
 
         return found[0];
+    }
+    
+    public static void pageReload() throws IOException{
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        String uri = ((HttpServletRequest) ec.getRequest()).getRequestURI();
+        ec.redirect(uri);
     }
 }

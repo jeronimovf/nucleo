@@ -1,60 +1,11 @@
-package br.jus.trt23.nucleo.util;
+package br.jus.trt23.nucleo.handlers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.Normalizer;
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-public class Util {
-
-    @SuppressWarnings("unchecked")
-    public static <T> List<T> castList(List<? extends T> lista, Class<T> tipo) {
-        return (List<T>) lista;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T extends Cloneable> List<T> deepCloneList(List<T> original) {
-        if (original == null || original.size() < 1) {
-            return new ArrayList<>();
-        }
-
-        try {
-            int originalSize = original.size();
-            Method cloneMethod = original.get(0).getClass().getDeclaredMethod("clone");
-            List<T> clonedList = new ArrayList<>();
-
-            for (int i = 0; i < originalSize; i++) {
-                clonedList.add((T) cloneMethod.invoke(original.get(i)));
-            }
-            return clonedList;
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            return new ArrayList<>();
-        }
-    }
-
-    public static boolean isStringValida(final String param) {
-        return param != null && !param.equals("");
-    }
-
-    public static String limparStringCaracteresLetras(final String texto) {
-        String resultado = null;
-        if (texto != null) {
-            resultado = texto.replaceAll("\\D+", "");
-        }
-        return resultado;
-    }
-
-    public static String removerAcentos(String str) {
-        String resultado = null;
-        if (str != null) {
-            resultado = Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-        }
-        return resultado;
-    }
+public class Tempo {
 
     public static boolean isSabado(final Date dia) {
         if (dia != null) {
@@ -303,7 +254,7 @@ public class Util {
             }
             c.add(Calendar.DATE, 1);
         }
-        return Long.valueOf(quantidade);
+        return quantidade;
     }
 
     public static Long dias(final Date dataInicio, final Date dataFim) {
@@ -314,7 +265,7 @@ public class Util {
             quantidade++;
             c.add(Calendar.DATE, 1);
         }
-        return Long.valueOf(quantidade);
+        return quantidade;
     }
 
     public static Long diasDesconsiderandoInicioFimIgual(final Date dataInicio, final Date dataFim) {
@@ -325,77 +276,65 @@ public class Util {
             quantidade++;
             c.add(Calendar.DATE, 1);
         }
-        return Long.valueOf(quantidade);
+        return quantidade;
+    }
+    
+    //para entender a diferenca entre as funções que comparam períodos de 
+    //vigência: 
+    //isVigentePlenamenteEntre: não interessa se o início da vigência  
+    //do objeto corrente é anterior a do período de teste ou se o términdo da
+    //vigência do objeto seja posterior ao final do período, mas se, em todo
+    //o período de teste, o objeto esteve vigente.
+    //Se periodo está contido o.vigencia
+    //isVigenteParcialmente: se o objeto corrente tiver sua vigência coincidindo
+    //com qualquer parte do período teste, retorna verdadeiro.  
+    //Se existe (o.vigencia intersecção periodo)
+    //isVigenteEstritamenteEntre: a vigência do objeto corrente deve estar
+    //compreendida no período de teste.
+    //Se o.vigencia está contido periodo.
+    //retorna verdadeiro se a entidade tiver vigencia em todo o período
+    //informado
+    public Boolean isP1VigentePlenamenteEmP2(LocalDate p1Inicio, LocalDate p1Fim,
+            LocalDate p2Inicio, LocalDate p2Fim) {
+        return (p1Inicio.compareTo(p2Inicio) <= 0 && (null == p1Fim
+                || p1Fim.compareTo(p2Fim) >= 0));
     }
 
-    private static final int[] PESOS_CPF = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2};
-    private static final int[] PESOS_CNPJ = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
-
-    private static int calcularDigito(String str, int[] peso) {
-        int soma = 0;
-        for (int indice = str.length() - 1, digito; indice >= 0; indice--) {
-            digito = Integer.parseInt(str.substring(indice, indice + 1));
-            soma += digito * peso[peso.length - str.length() + indice];
-        }
-        soma = 11 - soma % 11;
-
-        return soma > 9 ? 0 : soma;
-    }
-
-    public static boolean isCpf(String cpf) {
-        if (cpf == null) {
-            return false;
+    //retorna verdadeiro se a entidade tiver vigencia que abranja a data 
+    //informada
+    public Boolean isP1VigenteParcialmenteEmP2(LocalDate p1Inicio, LocalDate p1Fim,
+            LocalDate p2Inicio, LocalDate p2Fim) {
+        //início posterior
+        if ((p1Inicio.compareTo(p2Fim) <= 0) && (null == p1Fim || p1Fim.compareTo(p2Inicio) >= 0)) {
+            return true;
         } else {
-            cpf = limparStringCaracteresLetras(cpf);
         }
-        return cpf.length() == 11;
+        return false;
     }
 
-    public static boolean isCpfValido(String cpf) {
-        if (cpf == null) {
-            return false;
-        } else {
-            cpf = limparStringCaracteresLetras(cpf);
-        }
-        if (cpf.length() != 11) {
-            return false;
-        }
-        if (cpf.replace(cpf.substring(0, 1), "").length() == 0) {
-            return false;
-        }
-        Integer digito1 = calcularDigito(cpf.substring(0, 9), PESOS_CPF);
-        Integer digito2 = calcularDigito(cpf.substring(0, 9) + digito1, PESOS_CPF);
+    public Boolean isP1VigenteEstritamenteEmP2(LocalDate p1Inicio, LocalDate p1Fim,
+            LocalDate p2Inicio, LocalDate p2Fim) {
+        //o inicio do objeto corrente deve ser igual ou superior ao inicio do 
+        //período testado
+        if (p1Inicio.compareTo(p2Inicio) >= 0) {
+            //se o período testado estiver em aberto, fim==null, retorna true,
+            //contudo, se posteriormente for definida uma vigência final para 
+            //o objeto pai, poderá gerar inconsistência            
+            if (null == p2Fim) {
+                return true;
+            }
+            //se o período de teste tiver uma data de término definida,
+            //mas o objeto corrente não a tiver, acusa incompatibilidade de 
+            //vigência
+            if (null == p1Fim) {
+                return false;
+            }
 
-        return cpf.equals(cpf.substring(0, 9) + digito1.toString() + digito2.toString());
+            //se o objeto corrente possui vigência até a data final do período
+            //de teste retorna verdadeiro, senão, o contrário
+            return p1Fim.compareTo(p2Fim) <= 0;
+        }
+        return false;
     }
-
-    public static boolean isCnpjValido(String cnpj) {
-        if (cnpj == null) {
-            return false;
-        } else {
-            cnpj = limparStringCaracteresLetras(cnpj);
-        }
-        if (cnpj.length() != 14) {
-            return false;
-        }
-        if (cnpj.replace(cnpj.substring(0, 1), "").length() == 0) {
-            return false;
-        }
-        Integer digito1 = calcularDigito(cnpj.substring(0, 12), PESOS_CNPJ);
-        Integer digito2 = calcularDigito(cnpj.substring(0, 12) + digito1, PESOS_CNPJ);
-
-        return cnpj.equals(cnpj.substring(0, 12) + digito1.toString() + digito2.toString());
-    }
-
-    public static String aplicarMascaraCpf(String cpf) {
-        String cpfMascara = limparStringCaracteresLetras(cpf);
-        return String.format("%s.%s.%s-%s", cpfMascara.substring(0, 3), cpfMascara.substring(3, 6), cpfMascara.substring(6, 9), cpfMascara.substring(9));
-    }
-
-    public static String aplicarMascaraCnpj(String cnpj) {
-        String cnpjMascara = limparStringCaracteresLetras(cnpj);
-        return String.format("%s.%s.%s/%s-%s", cnpjMascara.substring(0, 2), cnpjMascara.substring(2, 5), cnpjMascara.substring(5, 8), cnpjMascara.substring(8, 12), cnpjMascara.substring(12));
-    }
-
-
+    
 }

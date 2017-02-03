@@ -1,9 +1,9 @@
-package br.jus.trt23.nucleo.util;
+package br.jus.trt23.nucleo.handlers;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-public class MensagemUtil 
+public class Mensagem 
 {
 	public static void info(final String mensagem) 
 	{

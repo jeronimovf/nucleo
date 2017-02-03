@@ -5,7 +5,8 @@
  */
 package br.jus.trt23.nucleo.validators;
 
-import br.jus.trt23.nucleo.jsf.util.JsfUtil;
+
+import br.jus.trt23.nucleo.handlers.Jsf;
 import java.util.Collection;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -40,7 +41,7 @@ public class ValidadorUtil{
 
     private static <T> boolean injectValidationsInJsf(Collection<ConstraintViolation<T>> cvs) {
         if (!cvs.isEmpty()) {
-            JsfUtil.addErrorMessagesFromConstraintViolations(cvs);
+            Jsf.addErrorMessagesFromConstraintViolations(cvs);
             return false;
         }
         return true;

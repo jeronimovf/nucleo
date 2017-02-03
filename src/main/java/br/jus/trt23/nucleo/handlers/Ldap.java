@@ -1,4 +1,4 @@
-package br.jus.trt23.nucleo.ldap;
+package br.jus.trt23.nucleo.handlers;
 
 import java.io.IOException;
 import java.io.InputStream;

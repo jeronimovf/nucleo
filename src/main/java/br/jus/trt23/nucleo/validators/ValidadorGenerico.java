@@ -5,8 +5,7 @@
  */
 package br.jus.trt23.nucleo.validators;
 
-import br.jus.trt23.nucleo.entities.EntidadeGenericaComId;
-import br.jus.trt23.nucleo.jsf.util.JsfUtil;
+import br.jus.trt23.nucleo.entities.EntidadeGenerica;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,14 +17,16 @@ import javax.validation.ConstraintValidatorContext;
 /**
  *
  * @author j129-9
+ * @param <A>
+ * @param <T>
  */
-public abstract class ValidadorGenerico<A extends Annotation, T extends EntidadeGenericaComId> implements ConstraintValidator<A, T> {
+public abstract class ValidadorGenerico<A extends Annotation, T extends EntidadeGenerica> implements ConstraintValidator<A, T> {
 
     protected A constraintAnnotation;
     protected T value;
 
     public abstract boolean passedCustomValidation();
-
+    
     @Override
     public void initialize(A constraintAnnotation) {
         this.constraintAnnotation = constraintAnnotation;
@@ -53,9 +54,6 @@ public abstract class ValidadorGenerico<A extends Annotation, T extends Entidade
 
         Boolean resultado = passedCustomValidation();
 
-        if (!resultado) {
-            JsfUtil.addErrorMessage(String.format(getConstraintMessage(), value.getNomeNatural().toLowerCase()) );
-        }
         return resultado;
     }
 
