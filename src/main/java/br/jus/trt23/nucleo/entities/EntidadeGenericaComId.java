@@ -16,6 +16,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +32,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public abstract class EntidadeGenerica implements Serializable, Comparable, Entidade {
+public abstract class EntidadeGenericaComId implements Serializable, Comparable, Entidade {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    protected Long id;
 
     protected static String[] uniqueIndex;
-
-    public abstract String getNomeNatural();
     
-    public abstract Serializable getId();
+    public abstract String getNomeNatural();
 
     public static Object getFieldValue(Object bean, String fieldName) {
         try {
@@ -46,7 +51,7 @@ public abstract class EntidadeGenerica implements Serializable, Comparable, Enti
                 }
             }
         } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.getLogger(EntidadeGenerica.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EntidadeGenericaComId.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -68,7 +73,7 @@ public abstract class EntidadeGenerica implements Serializable, Comparable, Enti
             return false;
         }
 
-        EntidadeGenerica eg = (EntidadeGenerica) obj;
+        EntidadeGenericaComId eg = (EntidadeGenericaComId) obj;
 
         //se ambos os objetos são persistentes a igualdade pode ser testada
         //pelos ids
@@ -90,7 +95,7 @@ public abstract class EntidadeGenerica implements Serializable, Comparable, Enti
     public int hashCode() {
         int hash = 3;
         try {
-            hash = 53 * hash + Objects.hashCode(getId());
+            hash = 53 * hash + Objects.hashCode(this.id);
         } catch (Exception e) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, String.format("Error {0} on hashCode method of {1}", e.getMessage()), new Object[]{this, this.getClass().getName()});
         }
@@ -103,18 +108,12 @@ public abstract class EntidadeGenerica implements Serializable, Comparable, Enti
             if (null == o) {
                 return -1;
             }
-            if (o instanceof EntidadeGenerica) {
-                EntidadeGenerica eg = (EntidadeGenerica) o;
+            if (o instanceof EntidadeGenericaComId) {
+                EntidadeGenericaComId eg = (EntidadeGenericaComId) o;
                 if (null == getId()) {
                     return -1;
                 }
-                if (getId() instanceof Comparable){
-                    Comparable idComparavel = (Comparable)getId();
-                    return idComparavel.compareTo(eg.getId());
-                }
-                else{
-                    return getId().equals(eg.getId())?0:-1;
-                }
+                return getId().compareTo(eg.getId());
             }
             return -1;
         } catch (Exception e) {
@@ -122,7 +121,7 @@ public abstract class EntidadeGenerica implements Serializable, Comparable, Enti
         }
     }
 
-    private boolean compareByIndex(EntidadeGenerica eg) {
+    private boolean compareByIndex(EntidadeGenericaComId eg) {
         Class c = this.getClass();
         Field f1;
         Object o1, o2;
@@ -137,7 +136,7 @@ public abstract class EntidadeGenerica implements Serializable, Comparable, Enti
 
             } catch (NoSuchFieldException | SecurityException |
                     IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(EntidadeGenerica.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EntidadeGenericaComId.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return true;
